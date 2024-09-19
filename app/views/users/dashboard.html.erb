@@ -1,0 +1,128 @@
+<div class="container-fluid h-100">
+
+  <!-- Bootstrap Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <a class="navbar-brand" href="#">MyApp</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+          <%= link_to 'Logout', destroy_user_session_path, method: :delete, data: { turbo: false }, class: 'btn btn-danger' %>
+        </li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="row no-gutters" style="height: 100vh;">
+    <!-- Movable Sidebar -->
+    <div id="sidebar" class="col-md-3 bg-light position-relative" style="transition: all 0.3s ease;">
+      <!-- Sidebar Toggle Button -->
+      <button id="sidebarToggle" class="btn btn-primary position-absolute" style="top: 10px; right: -50px;"></button>
+      
+      <!-- Sidebar Links (Check if Admin or Regular User) -->
+      <div class="list-group">
+        <% if current_user.admin? %>
+          <!-- Admin Sidebar -->
+          <%= link_to 'Admin Dashboard', '#', class: 'list-group-item list-group-item-action active' %>
+          <%= link_to 'Manage Users', '#', class: 'list-group-item list-group-item-action' %>
+          <%= link_to 'Site Settings', '#', class: 'list-group-item list-group-item-action' %>
+        <% else %>
+          <!-- Regular User Sidebar -->
+          <%= link_to 'Dashboard', '#', class: 'list-group-item list-group-item-action active' %>
+          <%= link_to 'Settings', '#', class: 'list-group-item list-group-item-action' %>
+          <%= link_to 'Profile', '#', class: 'list-group-item list-group-item-action' %>
+        <% end %>
+      </div>
+    </div>
+
+    <div id="mainContent" class="col-md-9 p-4">
+      <!-- Dashboard Content Based on Role -->
+      <% if current_user.admin? %>
+        <!-- Admin Dashboard Content -->
+        <h1>Welcome to the Admin Dashboard, <%= current_user.email %>!</h1>
+
+        <!-- Manage Users Section -->
+        <div class="card mb-4">
+          <div class="card-header">
+            Manage Users
+          </div>
+          <div class="card-body">
+            <p>Administer users, review roles, and manage account statuses.</p>
+            <%= link_to 'View Users', '#', class: 'btn btn-info' %>
+          </div>
+        </div>
+
+        <!-- Site Settings Section -->
+        <div class="card mb-4">
+          <div class="card-header">
+            Site Settings
+          </div>
+          <div class="card-body">
+            <p>Update site configurations, adjust settings, and more.</p>
+            <%= link_to 'Edit Settings', '#', class: 'btn btn-primary' %>
+          </div>
+        </div>
+      <% else %>
+        <!-- User Dashboard Content -->
+        <h1>Welcome to your Dashboard, <%= current_user.email %>!</h1>
+
+        <!-- User Profile Overview -->
+        <div class="card mb-4">
+          <div class="card-header">
+            Profile Overview
+          </div>
+          <div class="card-body">
+            <p><strong>Name:</strong> <%= current_user.name %></p>
+            <p><strong>Email:</strong> <%= current_user.email %></p>
+            <p><strong>Joined on:</strong> <%= current_user.created_at.strftime("%B %d, %Y") %></p>
+            <%= link_to 'Edit Profile', '#', class: 'btn btn-primary' %>
+          </div>
+        </div>
+
+        <!-- Recent Activity Section -->
+        <div class="card mb-4">
+          <div class="card-header">
+            Recent Activity
+          </div>
+          <div class="card-body">
+            <p>You have <%= current_user.tasks.count %> tasks pending.</p>
+            <%= link_to 'View Tasks', '#', class: 'btn btn-info' %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<!-- Optional Footer -->
+<footer class="footer bg-light text-center">
+  <div class="container">
+    <span class="text-muted">© 2024 MyApp, Inc.</span>
+  </div>
+</footer>
+
+<!-- JavaScript to Toggle Sidebar -->
+<script>
+  const sidebar = document.getElementById('sidebar');
+  const mainContent = document.getElementById('mainContent');
+  const toggleButton = document.getElementById('sidebarToggle');
+
+  toggleButton.addEventListener('click', () => {
+    // Toggle sidebar visibility
+    sidebar.classList.toggle('collapsed');
+    
+    // Adjust the main content width when sidebar is collapsed
+    if (sidebar.classList.contains('collapsed')) {
+      sidebar.style.marginLeft = '-250px'; // Hides the sidebar
+      mainContent.classList.remove('col-md-9');
+      mainContent.classList.add('col-md-12');
+    } else {
+      sidebar.style.marginLeft = '0'; // Shows the sidebar
+      mainContent.classList.remove('col-md-12');
+      mainContent.classList.add('col-md-9');
+    }
+  });
+</script>
